@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 class AplikasiTkinter:
     def __init__(self, root):
         self.root = root
-        self.root.title("Aplikasi Tkinter Sederhana")
+        self.root.title("widget")
         self.root.attributes("-fullscreen", True)
         self.root.bind("<Escape>", lambda e: self.root.attributes("-fullscreen", False))
 
@@ -14,8 +14,10 @@ class AplikasiTkinter:
 
         self.photo_background_default = None
         self.photo_background_new_page = None
+        self.photo_background_game = None
         self.default_bg_path = "background.png"
         self.new_page_bg_path = "bg2.png"
+        self.game_bg_path = "bg3.png"
 
         try:
             original_bg_image_pil = Image.open(self.default_bg_path)
@@ -25,6 +27,10 @@ class AplikasiTkinter:
             original_new_page_bg_pil = Image.open(self.new_page_bg_path)
             resized_new_page_bg_pil = original_new_page_bg_pil.resize((self.screen_width, self.screen_height), Image.LANCZOS)
             self.photo_background_new_page = ImageTk.PhotoImage(resized_new_page_bg_pil)
+
+            original_game_bg_pil = Image.open(self.game_bg_path)
+            resized_game_bg_pil = original_game_bg_pil.resize((self.screen_width, self.screen_height), Image.LANCZOS)
+            self.photo_background_game = ImageTk.PhotoImage(resized_game_bg_pil)
 
             self.bg_label = tk.Label(self.root, image=self.photo_background_default)
             self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
@@ -57,6 +63,93 @@ class AplikasiTkinter:
     def bind_hover_effects(self, button):
         button.bind("<Enter>", lambda e: button.config(bg=self.button_hover_bg))
         button.bind("<Leave>", lambda e: button.config(bg=self.button_normal_bg))
+
+    def show_game_page(self):
+        self.clear_current_page()
+
+        if hasattr(self, 'photo_background_game') and self.photo_background_game:
+            self.bg_label.config(image=self.photo_background_game)
+        else:
+            self.bg_label.config(image='', bg=self.content_bg_color)
+            print("Peringatan: bg3.png tidak ditemukan, menggunakan warna latar default.")
+
+        home_button = tk.Button(
+            self.bg_label,
+            text="< Back to Home",
+            command=self.show_home_screen,
+            font=("Poppins", 12, "bold"),
+            bg=self.button_normal_bg,
+            fg=self.button_text_fg,
+            relief="flat",
+            activebackground=self.button_hover_bg
+        )
+        home_button.place(x=20, y=20)
+        self.current_page_widgets.append(home_button)
+        self.bind_hover_effects(home_button)
+
+        game_info_label = tk.Label(
+            self.bg_label,
+            text=f"Pilih Aksimu!, {self.username}!",
+            font=("Basketball", 22, "bold"),
+            bg="#D9F2F4",
+            fg="black"
+        )
+        game_info_label.pack(pady=(100, 20))
+        self.current_page_widgets.append(game_info_label)
+
+        # --- BLOK KODE BARU UNTUK TOMBOL AKSI ---
+        # Tombol Menanam
+        plant_button = tk.Button(
+            self.bg_label,
+            text="Menanam",
+            # command=self.fungsi_menanam, # Ganti dengan fungsi yang sesuai
+            font=("Basketball", 14),
+            width=20,
+            height=2,
+            bg=self.button_normal_bg,
+            fg=self.button_text_fg,
+            relief="flat",
+            activebackground=self.button_hover_bg
+        )
+        plant_button.pack(pady=5)
+        self.current_page_widgets.append(plant_button)
+        self.bind_hover_effects(plant_button)
+
+        # Tombol Menyiram
+        water_button = tk.Button(
+            self.bg_label,
+            text="Menyiram",
+            # command=self.fungsi_menyiram, # Ganti dengan fungsi yang sesuai
+            font=("Basketball", 14),
+            width=20,
+            height=2,
+            bg=self.button_normal_bg,
+            fg=self.button_text_fg,
+            relief="flat",
+            activebackground=self.button_hover_bg
+        )
+        water_button.pack(pady=5)
+        self.current_page_widgets.append(water_button)
+        self.bind_hover_effects(water_button)
+
+        # Tombol Memetik
+        harvest_button = tk.Button(
+            self.bg_label,
+            text="Memetik",
+            # command=self.fungsi_memetik, # Ganti dengan fungsi yang sesuai
+            font=("Basketball", 14),
+            width=20,
+            height=2,
+            bg=self.button_normal_bg,
+            fg=self.button_text_fg,
+            relief="flat",
+            activebackground=self.button_hover_bg
+        )
+        harvest_button.pack(pady=5)
+        self.current_page_widgets.append(harvest_button)
+        self.bind_hover_effects(harvest_button)
+        # --- AKHIR BLOK KODE BARU ---
+
 
     def show_home_screen(self):
         self.clear_current_page()
@@ -138,7 +231,7 @@ class AplikasiTkinter:
             self.bg_label,
             text="Masukan Username Anda:",
             font=("Poppins", 16),
-            bg=self.content_bg_color
+            bg=self.content_bg_color,
         )
         label_username.pack(pady=(100, 10))
         self.current_page_widgets.append(label_username)
@@ -169,7 +262,6 @@ class AplikasiTkinter:
         )
         next_button.pack(pady=20)
         self.current_page_widgets.append(next_button)
-        self.bind_hover_effects(next_button)
 
     def on_next_button_click(self):
         username = self.entry_username.get()
@@ -223,12 +315,13 @@ class AplikasiTkinter:
         )
         ok_button.pack(pady=20)
         self.current_page_widgets.append(ok_button)
-        self.bind_hover_effects(ok_button)
-
 
     def on_ok_button_click(self):
-        self.clear_current_page()
-
+        if self.entry_tanaman.get().strip():
+            self.clear_current_page()
+        else:
+            messagebox.showwarning("Input Kosong", "Silakan masukkan nama tanaman terlebih dahulu.")
+            return
         if self.photo_background_new_page:
             self.bg_label.config(image=self.photo_background_new_page)
         else:
@@ -267,13 +360,12 @@ class AplikasiTkinter:
             height=1,
             bg="#D9D9D9",
             fg="darkgreen",
-            command=self.show_home_screen,
+            command=self.show_game_page,
             relief="flat",
             activebackground="#C0C0C0"
         )
         ok_button.pack(pady=30)
         self.current_page_widgets.append(ok_button)
-        self.bind_hover_effects(ok_button)
 
     def show_about_page(self):
         self.clear_current_page()
@@ -292,7 +384,7 @@ class AplikasiTkinter:
         self.current_page_widgets.append(photos_container)
 
         foto_files = ["foto1.png", "foto2.png", "foto3.png", "foto4.png"]
-        orang_names = ["Filuth Ridho Aji", "peri", "jahira", "talita"]
+        orang_names = ["Filuth Ridho Aji", "Rahmad Veri Apriansah", "Zahira Adiah Safa", "Talitha Roihanah Salsabila"]
 
         for i, foto_file in enumerate(foto_files):
             person_frame = tk.Frame(photos_container, bg="white")
@@ -307,27 +399,23 @@ class AplikasiTkinter:
 
                 photo_label = tk.Label(person_frame, image=photo_tk, bg=self.content_bg_color)
                 photo_label.pack(pady=5)
-                self.current_page_widgets.append(photo_label)
 
                 name_label = tk.Label(person_frame, text=orang_names[i], font=("Basketball", 14), fg="white", bg="black")
                 name_label.pack(pady=2)
-                self.current_page_widgets.append(name_label)
 
             except FileNotFoundError:
                 print(f"Error: {foto_file} tidak ditemukan. Menampilkan placeholder.")
                 placeholder_label = tk.Label(person_frame, text=f"Foto {i+1}\nTidak Ditemukan",
-                                             font=("Arial", 10), width=20, height=10,
-                                             bg="lightgray", fg="red")
+                                              font=("Arial", 10), width=20, height=10,
+                                              bg="lightgray", fg="red")
                 placeholder_label.pack(pady=5)
-                self.current_page_widgets.append(placeholder_label)
 
                 name_label = tk.Label(person_frame, text=orang_names[i], font=("Arial", 12), bg=self.content_bg_color)
                 name_label.pack(pady=2)
-                self.current_page_widgets.append(name_label)
 
         back_button = tk.Button(
             self.bg_label,
-            text="Kembali ke Home",
+            text="Back to Home",
             command=self.show_home_screen,
             font=("Arial", 12),
             pady=10,
