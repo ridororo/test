@@ -255,10 +255,10 @@ class AplikasiTkinter:
             font=("Poppins", 14),
             width=10,
             height=1,
-            bg="#A8B89C",
+            bg="#18AEB9",
             fg="white",
             relief="flat",
-            activebackground="#8BA588"
+            activebackground="#14959E"
         )
         next_button.pack(pady=20)
         self.current_page_widgets.append(next_button)
@@ -308,10 +308,10 @@ class AplikasiTkinter:
             font=("Poppins", 14),
             width=10,
             height=1,
-            bg="#A8B89C",
-            fg="darkgreen",
+            bg="#18AEB9",
+            fg="white",
             relief="flat",
-            activebackground="#8BA588"
+            activebackground="#14959E"
         )
         ok_button.pack(pady=20)
         self.current_page_widgets.append(ok_button)
@@ -358,11 +358,11 @@ class AplikasiTkinter:
             font=("Poppins", 14, "bold"),
             width=10,
             height=1,
-            bg="#D9D9D9",
-            fg="darkgreen",
+            bg="#18AEB9",
+            fg="white",
             command=self.show_game_page,
             relief="flat",
-            activebackground="#C0C0C0"
+            activebackground="#14959E"
         )
         ok_button.pack(pady=30)
         self.current_page_widgets.append(ok_button)
